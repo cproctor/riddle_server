@@ -1,7 +1,6 @@
 # This program runs the riddle server
 from flask import Flask, request
 from model import Riddle
-from helpers import check_input
 
 app = Flask(__name__)
 
@@ -24,26 +23,30 @@ def create_riddle():
     riddle.save()
     return riddle.as_dict(with_answer=True)
 
-@app.route('/<int:id>', methods=['GET'])
-def show_riddle(id):
+@app.route('/show', methods=['GET'])
+def show_riddle():
     "Returns one riddle, without its answer."
+    data = request.get_json()
+    errors = check_input(data, ["id"])
+    if len(errors) > 0:
+        return {"errors": errors}, 400
     try:
-        riddle = Riddle.get(id)
+        riddle = Riddle.get(data["id"])
         return riddle.as_dict(with_answer=False)
     except Riddle.DoesNotExist:
         return {"errors": ["riddle not found"]}, 404
 
-@app.route('/<int:id>', methods=['POST'])
-def guess_answer(id):
+@app.route('/guess', methods=['POST'])
+def guess_answer():
     "Accepts a `guess` param and returns whether or not it was correct."
+    data = request.get_json()
+    errors = check_input(data, ["id", "guess"])
+    if len(errors) > 0:
+        return {"errors": errors}, 400
     try:
-        riddle = Riddle.get(id)
+        riddle = Riddle.get(data["id"])
     except Riddle.DoesNotExist:
         return {"errors": ["riddle not found"]}, 404
-    data = request.get_json()
-    errors = check_input(data, ["guess"])
-    if len(errors) >0:
-        return {"errors": errors}, 400
     correct = riddle.check_guess(data['guess'])
     riddle.save()
     return {
