@@ -23,6 +23,11 @@ def create_riddle():
     riddle.save()
     return riddle.as_dict(with_answer=True)
 
+@app.route('/count', methods=['GET'])
+def count_riddles():
+        "Returns the number of riddles stored in the database."
+        return {'count': len(Riddle.all())}
+
 @app.route('/show', methods=['GET'])
 def show_riddle():
     "Returns one riddle, without its answer."
