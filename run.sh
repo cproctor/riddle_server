@@ -1,1 +1,1 @@
-FLASK_APP=riddles/server.py flask run --host=0.0.0.0
+gunicorn -w 4 'riddles.server:app' -b '127.0.0.1:8002'
