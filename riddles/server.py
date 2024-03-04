@@ -1,6 +1,6 @@
 # This program runs the riddle server
 from flask import Flask, request
-from model import Riddle
+from riddles.model import Riddle
 
 app = Flask(__name__)
 

@@ -1,0 +1,11 @@
+[Unit]
+Description = RiddleServer
+After = network.target
+
+[Service]
+User = root
+WorkingDirectory = /opt/riddle_server
+ExecStart = /opt/riddle_server/env/bin/gunicorn riddles.server:app -b 0.0.0.0:80
+
+[Install]
+WantedBy = multi-user.target
