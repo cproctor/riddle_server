@@ -10,7 +10,9 @@ class Riddle(Model):
     MIN_FUZZ_RATIO = 80
     
     def __repr__(self):
-        """Declares how to represent a Riddle as a string.                                                                 A riddle's string will look something like this:                                                                   <Riddle 12: Where can you get dragon milk? (3/15)>
+        """Declares how to represent a Riddle as a string.
+        A riddle's string will look something like this:
+        <Riddle 12: Where can you get dragon milk? (3/15)>
         """
         return "<Riddle {}: {} ({}/{})>".format(
             self.id or '(unsaved)', 
@@ -61,9 +63,16 @@ class Riddle(Model):
 
     def to_dict(self, with_answer=True):
         "Returns this Riddle's properties in a dict, optionally including the answer"
-        properties = ["id", "question", "answer", "guesses", "correct"]
-        return {prop: value for prop, value in zip(properties, self.values(with_id=True)) 
-                if with_answer or prop != 'answer'}
+        result = {
+            "id": self.id,
+            "question": self.question, 
+            "guesses": self.guesses, 
+            "correct": self.correct,
+            "difficulty": self.difficulty(),
+        }
+        if with_answer:
+            result["answer"] = self.answer
+        return result
 
     def check_guess(self, guess):
         """Checks whether a guess is correct and logs the attempt.
@@ -79,9 +88,9 @@ class Riddle(Model):
         - "it's a stick"    74
         - "idk"             40                                                                                             """
         self.guesses += 1
-        similarity = fuzz.ratio(guess.lower(), self.answer.lower)
-        if similarity >= self.MIN_FUZZ_RATIO:
+        similarity = fuzz.ratio(guess.lower(), self.answer.lower())
+        is_correct = similarity >= self.MIN_FUZZ_RATIO
+        if is_correct:
             self.correct+= 1
-            return True
-        else:
-            return False
+        self.save()
+        return is_correct

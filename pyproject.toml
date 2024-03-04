@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "riddle-server"
+version = "0.1.0"
+description = "A toy client/server pair for learning about networking."
+authors = ["Chris Proctor <chris@chrisproctor.net>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^5.0.3"
+django-banjo = "^0.3.0"
+fuzzywuzzy = "^0.18.0"
+python-levenshtein = "^0.25.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
